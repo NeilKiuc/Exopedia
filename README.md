@@ -191,7 +191,7 @@ This tool is designed to work with data from:
 
 ## License
 
-This project is open source and available under the MIT License.
+This project is open source and available under the TSP License.
 
 ## Support
 
