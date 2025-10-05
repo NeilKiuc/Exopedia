@@ -1,14 +1,8 @@
 import json
-import os
-import sys
 from http.server import BaseHTTPRequestHandler
 from typing import Any, Dict
 
-# Ensure project root on sys.path for `exo_api` import in Vercel function runtime
-_CUR_DIR = os.path.dirname(__file__)
-_ROOT_DIR = os.path.abspath(os.path.join(_CUR_DIR, os.pardir))
-if _ROOT_DIR not in sys.path:
-    sys.path.append(_ROOT_DIR)
+from exo_api.exo import exo
 
 from exo_api.exo import exo
 

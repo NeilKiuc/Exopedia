@@ -1,17 +1,10 @@
 import json
 import time
-import os
-import sys
 from http.server import BaseHTTPRequestHandler
 from typing import Any, Dict
 
-# Make sure the project root is on sys.path so we can import `exo_api` when deployed
-_CUR_DIR = os.path.dirname(__file__)
-_ROOT_DIR = os.path.abspath(os.path.join(_CUR_DIR, os.pardir))
-if _ROOT_DIR not in sys.path:
-    sys.path.append(_ROOT_DIR)
-
 from exo_api.exo import exo
+
 
 
 def _read_json(handler: BaseHTTPRequestHandler) -> Dict[str, Any]:
