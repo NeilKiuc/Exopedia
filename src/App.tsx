@@ -69,7 +69,7 @@ function App() {
             <div className="flex items-center gap-8">
               <Telescope className="text-blue-600" size={52} />
               <div className="ml-4">
-                <h1 className="text-2xl font-bold text-gray-900">Exoplanet Scout</h1>
+                <h1 className="text-2xl font-bold text-gray-900">Exopedia</h1>
                 <p className="text-sm text-gray-600">Transit Method Data Collection</p>
               </div>
             </div>

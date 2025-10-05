@@ -136,12 +136,12 @@ export class ExoplanetDataManager {
     for (let i = 1; i < lines.length; i++) {
       try {
         const cells = this.parseCSVLine(lines[i]);
-        
+
         if (cells.length < 8) {
           failed.push({
             row: i + 1,
             error: 'Insufficient columns',
-            data: cells
+            data: Object.assign({}, cells) // Convert array to object
           });
           continue;
         }
@@ -177,7 +177,7 @@ export class ExoplanetDataManager {
           failed.push({
             row: i + 1,
             error: 'Invalid data format',
-            data: cells
+            data: Object.assign({}, cells) // Convert array to object
           });
           continue;
         }
@@ -187,7 +187,7 @@ export class ExoplanetDataManager {
         failed.push({
           row: i + 1,
           error: `Parse error: ${error}`,
-          data: lines[i]
+          data: { line: lines[i] } // Wrap string in an object
         });
       }
     }
@@ -199,10 +199,10 @@ export class ExoplanetDataManager {
     const result: string[] = [];
     let current = '';
     let inQuotes = false;
-    
+
     for (let i = 0; i < line.length; i++) {
       const char = line[i];
-      
+
       if (char === '"') {
         if (inQuotes && line[i + 1] === '"') {
           current += '"';
@@ -217,7 +217,7 @@ export class ExoplanetDataManager {
         current += char;
       }
     }
-    
+
     result.push(current);
     return result;
   }
