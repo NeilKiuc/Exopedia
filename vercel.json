@@ -1,7 +1,7 @@
 {
   "functions": {
     "api/**/*.py": {
-      "runtime": "python3.11",
+      "runtime": "vercel-python@3.11",
       "maxDuration": 10,
       "includeFiles": "exo_api/**",
       "excludeFiles": "exo_api/venv/**"
