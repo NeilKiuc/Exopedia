@@ -2,7 +2,8 @@
   "version": 2,
   "builds": [
     { "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "dist", "buildCommand": "npm run build" } },
-    { "src": "api/**/*.py", "use": "@vercel/python@3.0.0", "config": { "pythonVersion": "3.11" } }
+    { "src": "api/**/*.ts", "use": "@vercel/node@3.0.0" },
+    { "src": "api/**/*.js", "use": "@vercel/node@3.0.0" }
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
