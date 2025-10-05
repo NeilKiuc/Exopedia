@@ -33,7 +33,22 @@ export const AIAnalysis: React.FC<AIAnalysisProps> = ({ data }) => {
     if (savedConfig) {
       try {
         const parsed = JSON.parse(savedConfig);
-        setConfig(parsed);
+        // If we're NOT on localhost but the saved endpoint points to localhost,
+        // auto-correct to the relative Vercel API path so it works on phones.
+        const isLocalHost = typeof window !== 'undefined' && (
+          window.location.hostname === 'localhost' ||
+          window.location.hostname === '127.0.0.1' ||
+          window.location.hostname === '0.0.0.0'
+        );
+        const endpointStr = String(parsed.endpoint || '');
+        const pointsToLocal = /localhost|127\.0\.0\.1|0\.0\.0\.0/i.test(endpointStr);
+        const corrected = (!isLocalHost && pointsToLocal)
+          ? { ...parsed, endpoint: '/api/analyze' }
+          : parsed;
+        setConfig(corrected);
+        if (corrected !== parsed) {
+          localStorage.setItem('ai-model-config', JSON.stringify(corrected));
+        }
         setIsConfigured(true);
       } catch (error) {
         console.error('Failed to load AI config:', error);
