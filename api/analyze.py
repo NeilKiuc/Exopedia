@@ -19,6 +19,10 @@ def _send_json(handler: BaseHTTPRequestHandler, status: int, data: Dict[str, Any
     payload = json.dumps(data).encode('utf-8')
     handler.send_response(status)
     handler.send_header('Content-Type', 'application/json; charset=utf-8')
+    # CORS headers (safe for same-origin and useful for local testing)
+    handler.send_header('Access-Control-Allow-Origin', '*')
+    handler.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+    handler.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
     handler.send_header('Content-Length', str(len(payload)))
     handler.end_headers()
     handler.wfile.write(payload)
@@ -33,13 +37,8 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        # Health endpoint for convenience (matches /api/analyze/health from FastAPI)
-        if self.path.rstrip('/') == '':
-            # If someone GETs /api/analyze directly
-            return _send_json(self, 200, {"status": "ok"})
-        if self.path.endswith('/health'):
-            return _send_json(self, 200, {"status": "ok"})
-        return _send_json(self, 404, {"error": "Not Found"})
+        # Simple OK for GET requests
+        return _send_json(self, 200, {"status": "ok"})
 
     def do_POST(self):
         t0 = time.time()

@@ -11,6 +11,11 @@ export class AIModelService {
   // Method 1: REST API Communication (most common)
   async analyzeViaAPI(request: AIAnalysisRequest): Promise<AIAnalysisResult> {
     try {
+      // Use AbortController for broad browser support (Safari mobile lacks AbortSignal.timeout)
+      const controller = new AbortController();
+      const timeoutMs = this.config.timeout || 30000;
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
       const response = await fetch(this.config.endpoint, {
         method: 'POST',
         headers: {
@@ -23,8 +28,10 @@ export class AIModelService {
           parameters: request.parameters || {},
           model_name: this.config.modelName,
         }),
-        signal: AbortSignal.timeout(this.config.timeout || 30000),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(`AI API request failed: ${response.status} ${response.statusText}`);
@@ -32,7 +39,20 @@ export class AIModelService {
 
       const result = await response.json();
       return this.formatAPIResponse(result);
-    } catch (error) {
+  } catch (error) {
+      // If aborted, surface a clear timeout message
+  if (error instanceof DOMException && error.name === 'AbortError') {
+        return {
+          success: false,
+          results: {},
+          metadata: {
+            modelVersion: 'unknown',
+            analysisTimestamp: new Date(),
+            processingTime: 0,
+          },
+          error: 'Request timed out',
+        };
+      }
       return {
         success: false,
         results: {},
@@ -150,13 +170,17 @@ export class AIModelService {
   async testConnection(): Promise<{ success: boolean; message: string; latency?: number }> {
     const startTime = Date.now();
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
       const response = await fetch(`${this.config.endpoint}/health`, {
-        method: 'GET',
-        headers: {
-          ...(this.config.apiKey && { 'Authorization': `Bearer ${this.config.apiKey}` }),
-        },
-        signal: AbortSignal.timeout(5000),
-      });
+          method: 'GET',
+          headers: {
+            ...(this.config.apiKey && { 'Authorization': `Bearer ${this.config.apiKey}` }),
+          },
+          signal: controller.signal,
+        });
+
+      clearTimeout(timeoutId);
 
       const latency = Date.now() - startTime;
 
@@ -173,6 +197,9 @@ export class AIModelService {
         };
       }
     } catch (error) {
+  if (error instanceof DOMException && error.name === 'AbortError') {
+        return { success: false, message: 'Health check timed out' };
+      }
       return {
         success: false,
         message: error instanceof Error ? error.message : 'Connection test failed',
