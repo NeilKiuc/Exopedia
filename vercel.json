@@ -1,13 +1,11 @@
 {
-  "version": 2,
-  "builds": [
-    { "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "dist", "buildCommand": "npm run build" } },
-    { "src": "api/**/*.ts", "use": "@vercel/node@2" },
-    { "src": "api/**/*.js", "use": "@vercel/node@2" }
-  ],
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/" }
+  "functions": {
+    "api/**/*.ts": { "runtime": "nodejs22.x", "maxDuration": 10 },
+    "api/**/*.js": { "runtime": "nodejs22.x", "maxDuration": 10 }
+  },
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" }
   ]
 }
