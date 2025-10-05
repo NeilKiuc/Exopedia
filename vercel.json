@@ -1,12 +1,12 @@
 {
-  "functions": {
-    "api/**/*.py": {
-      "runtime": "python3.11",
-      "maxDuration": 10,
-      "includeFiles": "exo_api/**",
-      "excludeFiles": "exo_api/venv/**"
-    }
-  },
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist"
+  "version": 2,
+  "builds": [
+    { "src": "package.json", "use": "@vercel/static-build", "config": { "distDir": "dist", "buildCommand": "npm run build" } },
+    { "src": "api/**/*.py", "use": "@vercel/python@3.0.0", "config": { "pythonVersion": "3.11" } }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
 }
