@@ -1,0 +1,10 @@
+{
+  "model": "rule-thresholds",
+  "thresholds": {
+    "exo_snr": 20,
+    "exo_depth": 500,
+    "candidate_snr": 10,
+    "candidate_depth": 200
+  },
+  "version": "0.1.0"
+}
