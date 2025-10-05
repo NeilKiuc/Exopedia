@@ -1,9 +1,18 @@
 import json
 import time
+import os
+import sys
 from http.server import BaseHTTPRequestHandler
 from typing import Any, Dict
 
-from exo_api.exo import exo
+# Ensure we can import the exo_api package located under the api/ folder
+try:
+    from exo_api.exo import exo  # type: ignore
+except Exception:
+    api_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    if api_dir not in sys.path:
+        sys.path.append(api_dir)
+    from exo_api.exo import exo  # type: ignore
 
 
 def _read_json(handler: BaseHTTPRequestHandler) -> Dict[str, Any]:
