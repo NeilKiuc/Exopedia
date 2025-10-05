@@ -141,7 +141,10 @@ export class ExoplanetDataManager {
           failed.push({
             row: i + 1,
             error: 'Insufficient columns',
-            data: Object.assign({}, cells) // Convert array to object
+            data: cells.reduce((acc, value, index) => {
+              acc[`column_${index}`] = value;
+              return acc;
+            }, {} as Record<string, unknown>) // Convert array to object
           });
           continue;
         }
@@ -177,7 +180,10 @@ export class ExoplanetDataManager {
           failed.push({
             row: i + 1,
             error: 'Invalid data format',
-            data: Object.assign({}, cells) // Convert array to object
+            data: cells.reduce((acc, value, index) => {
+              acc[`column_${index}`] = value;
+              return acc;
+            }, {} as Record<string, unknown>) // Convert array to object
           });
           continue;
         }
