@@ -10,7 +10,10 @@ interface AIAnalysisProps {
 
 export const AIAnalysis: React.FC<AIAnalysisProps> = ({ data }) => {
   const [config, setConfig] = useState<AIModelConfig>({
-    endpoint: 'http://localhost:8000/api/analyze', // Default endpoint
+    endpoint:
+      typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+        ? 'http://localhost:8000/api/analyze'
+        : '/api/analyze',
     apiKey: '',
     modelName: '',
     timeout: 30000,
