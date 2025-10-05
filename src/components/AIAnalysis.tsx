@@ -8,12 +8,20 @@ interface AIAnalysisProps {
   data: ExoplanetData[];
 }
 
+const inferDefaultEndpoint = () => {
+  if (typeof window !== 'undefined' && (
+    window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname === '0.0.0.0'
+  )) {
+    return 'http://localhost:8000/api/analyze';
+  }
+  return '/api/analyze';
+};
+
 export const AIAnalysis: React.FC<AIAnalysisProps> = ({ data }) => {
   const [config, setConfig] = useState<AIModelConfig>({
-    endpoint:
-      typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-        ? 'http://localhost:8000/api/analyze'
-        : '/api/analyze',
+    endpoint: inferDefaultEndpoint(),
     apiKey: '',
     modelName: '',
     timeout: 30000,
@@ -142,10 +150,19 @@ export const AIAnalysis: React.FC<AIAnalysisProps> = ({ data }) => {
                 type="url"
                 value={config.endpoint}
                 onChange={(e) => setConfig(prev => ({ ...prev, endpoint: e.target.value }))}
-                placeholder="http://localhost:8000/api/analyze"
+                placeholder="/api/analyze"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
-              <p className="text-xs text-gray-500 mt-1">URL where your AI model is hosted</p>
+              <div className="flex items-center gap-3 mt-1">
+                <p className="text-xs text-gray-500">URL where your AI model is hosted</p>
+                <button
+                  type="button"
+                  className="text-xs text-blue-600 hover:text-blue-800 underline"
+                  onClick={() => setConfig(prev => ({ ...prev, endpoint: inferDefaultEndpoint() }))}
+                >
+                  Use default
+                </button>
+              </div>
             </div>
 
             <div>
